@@ -1,0 +1,42 @@
+name: Build converter APK (2 fases)
+
+on:
+  push:
+    branches: ["main", "master"]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: gradle/actions/setup-gradle@v3
+
+      # Fase 1: compilar los 5 stubs (plantillas con distinto package)
+      - name: Build stubs
+        run: gradle :stub:assembleRelease --stacktrace
+
+      # Fase 2: incrustar stubs en la convertidora y compilarla
+      - name: Embed stubs into converter assets
+        run: |
+          mkdir -p app/src/main/assets/stubs
+          for i in 1 2 3 4 5; do
+            APK=$(ls stub/build/outputs/apk/stub$i/release/*.apk | head -n 1)
+            echo "Stub $i: $APK"
+            cp "$APK" "app/src/main/assets/stubs/stub$i.apk"
+          done
+          ls -lh app/src/main/assets/stubs/
+
+      - name: Build converter APK
+        run: gradle :app:assembleDebug --stacktrace
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: HTML-a-APK-convertidora
+          path: app/build/outputs/apk/debug/*.apk
