@@ -10,4 +10,13 @@
     <string name="msg_generating">Generando APK, espera…</string>
     <string name="msg_done">APK generado. Acepta la instalación.</string>
     <string name="msg_no_stub">Plantilla no encontrada en assets/stubs/. Ejecuta el CI completo.</string>
+    <string name="phase_patch">1/3 Parcheando plantilla…</string>
+    <string name="phase_sign">2/3 Firmando APK…</string>
+    <string name="phase_install">3/3 Instalando…</string>
+    <string name="msg_done_detail">APK %1$s generado. Acepta la instalación. Copia guardada en Descargas/Html2Apk.</string>
+    <string name="msg_need_unknown_sources">Permiso pendiente: concede «Instalar apps desconocidas» y pulsa Generar de nuevo.</string>
+    <string name="dlg_unknown_title">Permiso de instalación</string>
+    <string name="dlg_unknown_msg">Android exige conceder «Instalar apps desconocidas» a esta app antes de instalar el APK generado. Ábrelo en ajustes, actívalo y vuelve a pulsar Generar.</string>
+    <string name="dlg_open_settings">Abrir ajustes</string>
+    <string name="dlg_error_title">Error al generar</string>
 </resources>
