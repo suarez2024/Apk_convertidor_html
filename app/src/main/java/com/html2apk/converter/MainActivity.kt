@@ -9,6 +9,7 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.html2apk.converter.core.ApkInstaller
@@ -40,7 +41,7 @@ class MainActivity : AppCompatActivity() {
             iconFile = dest
             toast("Icono cargado")
         } catch (e: Exception) {
-            toast("Error icono: ${e.message}")
+            showError("Error icono", e)
         }
     }
 
@@ -56,7 +57,7 @@ class MainActivity : AppCompatActivity() {
             refreshStatus()
             toast("ZIP importado: ${projects.listFiles().size} archivos")
         } catch (e: Exception) {
-            toast("Error ZIP: ${e.message} (debe contener index.html)")
+            showError("Error ZIP (debe contener index.html)", e)
         }
     }
 
@@ -112,7 +113,9 @@ class MainActivity : AppCompatActivity() {
         }
         toast(getString(R.string.msg_generating))
         lifecycleScope.launch(Dispatchers.IO) {
+            val installer = ApkInstaller(this@MainActivity)
             try {
+                setPhase(getString(R.string.phase_patch))
                 projects.saveIndexHtml(etHtml.text.toString())
                 val patcher = TemplatePatcher(this@MainActivity)
                 if (patcher.availableStubs().isEmpty()) {
@@ -121,17 +124,59 @@ class MainActivity : AppCompatActivity() {
                 val unsigned = File(cacheDir, "unsigned.apk")
                 val signed = File(cacheDir, "signed.apk")
                 patcher.patch(projects.wwwDir, appName, iconFile, unsigned)
+
+                setPhase(getString(R.string.phase_sign))
                 ApkSignerHelper(this@MainActivity).sign(unsigned, signed)
-                val dest = ApkInstaller(this@MainActivity).install(signed, appName)
+
+                if (!installer.canInstall()) {
+                    withContext(Dispatchers.Main) {
+                        showUnknownSourcesDialog(installer)
+                    }
+                    return@launch
+                }
+
+                setPhase(getString(R.string.phase_install))
+                val result = installer.install(signed, appName)
                 withContext(Dispatchers.Main) {
-                    toast(getString(R.string.msg_done) + " " + dest.name)
+                    tvStatus.text = getString(R.string.msg_done_detail, result.fileName)
+                    toast(getString(R.string.msg_done) + " " + result.fileName)
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
-                    toast("Fallo: ${e.message}")
+                    showError(getString(R.string.dlg_error_title), e)
                 }
             }
         }
+    }
+
+    private suspend fun setPhase(text: String) =
+        withContext(Dispatchers.Main) { tvStatus.text = text }
+
+    /** Error persistente: queda en pantalla y en dialogo (no solo Toast fugaz). */
+    private fun showError(title: String, e: Exception) {
+        val detail = "${e.javaClass.simpleName}: ${e.message}"
+        tvStatus.text = "Error: $detail"
+        AlertDialog.Builder(this)
+            .setTitle(title)
+            .setMessage("Se ha producido un error:\n\n$detail\n\nCopia este texto si necesitas reportarlo.")
+            .setPositiveButton("OK", null)
+            .show()
+    }
+
+    private fun showUnknownSourcesDialog(installer: ApkInstaller) {
+        tvStatus.text = getString(R.string.msg_need_unknown_sources)
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.dlg_unknown_title))
+            .setMessage(getString(R.string.dlg_unknown_msg))
+            .setPositiveButton(getString(R.string.dlg_open_settings)) { _, _ ->
+                try {
+                    startActivity(installer.unknownSourcesIntent())
+                } catch (e: Exception) {
+                    showError("No se pudo abrir ajustes", e)
+                }
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
     }
 
     private fun toast(msg: String) =
