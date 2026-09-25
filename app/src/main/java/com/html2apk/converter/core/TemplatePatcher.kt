@@ -56,6 +56,14 @@ class TemplatePatcher(private val context: Context) {
                     zout.putNextEntry(ZipEntry(name).apply {
                         method = entry.method
                         time = entry.time
+                        // Las entradas STORED (resources.arsc, .so, etc.) exigen
+                        // size/crc prefijados o ZipOutputStream lanza
+                        // "STORED entry missing size, compressed size, or CRC-32".
+                        if (method == ZipEntry.STORED) {
+                            size = entry.size
+                            compressedSize = entry.compressedSize
+                            crc = entry.crc
+                        }
                     })
                     zin.getInputStream(entry).copyTo(zout)
                     zout.closeEntry()
