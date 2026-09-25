@@ -51,4 +51,5 @@ class ProjectManager(private val context: Context) {
         wwwDir.walkTopDown().filter { it.isFile }
             .map { it.relativeTo(wwwDir).path.replace('\\', '/') }
             .sorted()
+            .toList()
 }
