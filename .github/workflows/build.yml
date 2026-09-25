@@ -17,12 +17,12 @@ jobs:
           java-version: "17"
 
       - uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: "8.7"
 
-      # Fase 1: compilar los 5 stubs (plantillas con distinto package)
       - name: Build stubs
         run: gradle :stub:assembleRelease --stacktrace
 
-      # Fase 2: incrustar stubs en la convertidora y compilarla
       - name: Embed stubs into converter assets
         run: |
           mkdir -p app/src/main/assets/stubs
