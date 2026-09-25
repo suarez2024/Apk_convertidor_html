@@ -1,61 +1,59 @@
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
 }
 
 android {
-    namespace = "com.html2apk.stub"
-    compileSdk = 34
+    namespace 'com.html2apk.stub'
+    compileSdk 34
 
     defaultConfig {
-        minSdk = 24
-        targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        minSdk 24
+        targetSdk 34
+        versionCode 1
+        versionName '1.0'
     }
 
-    // 5 sabores con distinto package para poder instalar
-    // hasta 5 apps generadas a la vez sin colision (truco offline).
-    flavorDimensions += "slot"
+    flavorDimensions 'slot'
     productFlavors {
-        create("stub1") {
-            dimension = "slot"
-            applicationId = "com.html2apk.stub1"
+        stub1 {
+            dimension 'slot'
+            applicationId 'com.html2apk.stub1'
         }
-        create("stub2") {
-            dimension = "slot"
-            applicationId = "com.html2apk.stub2"
+        stub2 {
+            dimension 'slot'
+            applicationId 'com.html2apk.stub2'
         }
-        create("stub3") {
-            dimension = "slot"
-            applicationId = "com.html2apk.stub3"
+        stub3 {
+            dimension 'slot'
+            applicationId 'com.html2apk.stub3'
         }
-        create("stub4") {
-            dimension = "slot"
-            applicationId = "com.html2apk.stub4"
+        stub4 {
+            dimension 'slot'
+            applicationId 'com.html2apk.stub4'
         }
-        create("stub5") {
-            dimension = "slot"
-            applicationId = "com.html2apk.stub5"
+        stub5 {
+            dimension 'slot'
+            applicationId 'com.html2apk.stub5'
         }
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            minifyEnabled false
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "17"
+        jvmTarget = '17'
     }
 }
 
 dependencies {
-    implementation("androidx.core:core-ktx:1.12.0")
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("androidx.webkit:webkit:1.10.0")
+    implementation 'androidx.core:core-ktx:1.12.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.webkit:webkit:1.10.0'
 }
