@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">HTML a APK</string>
+    <string name="hint_app_name">Nombre de la app (ej. Mi Tienda)</string>
+    <string name="hint_html">Pega o edita tu index.html aquí…</string>
+    <string name="btn_preview">Vista previa</string>
+    <string name="btn_pick_icon">Elegir icono (PNG)</string>
+    <string name="btn_import_zip">Importar ZIP (multipágina)</string>
+    <string name="btn_generate">Generar e instalar APK (offline)</string>
+    <string name="msg_need_name">Escribe el nombre de la app</string>
+    <string name="msg_generating">Generando APK, espera…</string>
+    <string name="msg_done">APK generado. Acepta la instalación.</string>
+    <string name="msg_no_stub">Plantilla no encontrada en assets/stubs/. Ejecuta el CI completo.</string>
+</resources>

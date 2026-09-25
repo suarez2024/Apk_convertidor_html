@@ -1,0 +1,8 @@
+Esta carpeta recibe los stubs pre-compilados en CI (fase 1).
+No subir APKs a mano: el workflow .github/workflows/build.yml los genera
+desde el modulo :stub (stub1..stub5) y los copia aqui antes de compilar :app.
+
+Local (con Android SDK):
+  ./gradlew :stub:assembleRelease
+  # copiar stub/build/outputs/apk/stubX/release/*.apk -> app/src/main/assets/stubs/stubX.apk
+  ./gradlew :app:assembleDebug
